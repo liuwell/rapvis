@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="rapvis", # Replace with your own username
-    version="1.0.1",
+    version="0.0.1",
     author="Wei Liu",
     author_email="liuwei_hnnd@163.com",
 	keywords=['RNAseq', 'Visualization', 'different Expressed','GO', 'Enrichment',
