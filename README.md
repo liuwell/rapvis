@@ -2,7 +2,7 @@
 
 ***
 #### Dependency 
-Sevral external software were depended for rapvis:
+* Sevral external software were depended for rapvis:
 
 	+ trimmomatic 
 	+ hisat2 
@@ -13,6 +13,7 @@ Sevral external software were depended for rapvis:
 	+ bedtools
 
 #### Mandatory
+*
 	+ python3.6+
 	+ pandas
 	+ numpy
