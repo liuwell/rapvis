@@ -14,10 +14,16 @@ import numpy as np
 from rapvis_quality import *
 
 def current_time():
+	'''
+	get current time
+	'''
 	return datetime.datetime.now().strftime('%b-%d-%Y %H:%M:%S')
 
 
 def GetRunningTasks(name):
+	'''
+	get the number of running tasks in the server
+	'''
 	subCounts = 'subCounts.txt'
 	os.system("qstat > %s" % subCounts)
 	n=0
@@ -30,8 +36,10 @@ def GetRunningTasks(name):
 	return n	
 
 
-def SubmitTask(fi, output, adapter, threads, species, tasks, name, minlen, trim5, queue):
-	
+def SubmitTask(fi, output, adapter, threads, species, tasks, name, minlen, trim5, queue, rRNA):
+	'''
+	submit tasks to the server
+	'''
 	### get the data with fastq format
 	files=[]
 	fAll = glob.glob("%s/*" % fi)
@@ -72,6 +80,10 @@ def SubmitTask(fi, output, adapter, threads, species, tasks, name, minlen, trim5
 
 				realpath = sys.path[0]
 				f.write("python %s/rapvis_process.py -f1 %s -f2 %s -o %s -a %s -p %d -s %s --minlen %d --trim5 %d\n" %(realpath, R1, R2, output, adapter, threads, species, minlen, trim5))
+				
+				if rRNA:
+					f.write("python %s/rapvis_rRNA.py -f1 %s -f2 %s -o %s -p %d\n" % (realpath, R1, R2, output, threads))
+				
 				f.close()
 			
 				subprocess.call("qsub -cwd -q %s %s" % (queue, tmp), shell=True)
@@ -178,7 +190,12 @@ def gene_dis(fi, output, species):
 	cat_type = CategoricalDtype(categories=data.columns[1:], ordered =True)
 	data_melt2['sample'] = data_melt2['sample'].astype(cat_type)
 
-	aspect = np.log(int(data.shape[1])) - 1 
+	aspect = int(data.shape[1])
+	if aspect >3:
+		aspect = np.log(aspect) - 1 
+	else :
+		aspect = aspect/3
+
 	colors = list(reversed(sns.color_palette()[0:5]))
 	hue_order = ["others", "pseudogene", "antisense", "lincRNA", "protein_coding"]
 	sns.displot(data_melt2, x="sample", hue="gene_type", hue_order=hue_order, palette=colors, multiple="stack", shrink=.8, height=4, aspect=aspect)
@@ -241,14 +258,15 @@ if __name__ == '__main__':
 	parser.add_argument('--trim5', default=0, type=int, help='remove bases from the begining of each read (default:0)')
 	parser.add_argument('-q', default='b1.q', choices=['b1.q', 'g1.q'], type=str, help='bind job to queue(s)')
 	parser.add_argument('-m', '--merge', action='store_true', help='merge gene expression profiles and plot distribution pattern')
-	parser.add_argument('-v', '--version', action='version', version='%(prog)s 1.0.0')
+	parser.add_argument('-v', '--version', action='version', version='%(prog)s 0.0.1')
+	parser.add_argument('--rRNA', action='store_true', help='whether mapping to rRNA')
 
 	args = parser.parse_args()
 
 	print("\n%s ..... Start RNAseq processing" % (current_time()))
 	start_time = time.time()
 
-	SubmitTask(args.input, args.output, args.adapter, args.threads, args.species, args.tasks, args.name, args.minlen, args.trim5, args.q)
+	SubmitTask(args.input, args.output, args.adapter, args.threads, args.species, args.tasks, args.name, args.minlen, args.trim5, args.q, args.rRNA)
 	
 	if args.merge:
 		fi = merge_profiles(args.name, args.output)
@@ -256,6 +274,9 @@ if __name__ == '__main__':
 		
 		quality(args.output)
 		mapping(args.output)
+
+	if args.rRNA:
+		rRNAratio(args.output)
 
 	end_time = time.time()
 	run_time = round((end_time - start_time)/60, 5)

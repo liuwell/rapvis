@@ -1,0 +1,11 @@
+##sequence-region NR_046235.3 1 13357
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=9606
+NR_046235.3	RefSeq	region	1	13357	.	+	.	ID=NR_046235.3:1..13357;Dbxref=taxon:9606;Name=22;chromosome=22;gbkey=Src;genome=genomic;map=22;mol_type=rRNA
+NR_046235.3	RefSeq	gene	1	13357	.	+	.	ID=gene-RNA45SN5;Dbxref=GeneID:100861532,HGNC:HGNC:53530;Name=RNA45SN5;description=RNA%2C 45S pre-ribosomal N5;gbkey=Gene;gene=RNA45SN5;gene_synonym=RNA45S5
+NR_046235.3	RefSeq	rRNA	1	13357	.	+	.	ID=rna-RNA45SN5;Parent=gene-RNA45SN5;Dbxref=GeneID:100861532,HGNC:HGNC:53530;gbkey=rRNA;gene=RNA45SN5;product=RNA%2C 45S pre-ribosomal N5
+NR_046235.3	RefSeq	exon	1	13357	.	+	.	ID=exon-RNA45SN5-1;Parent=rna-RNA45SN5;Dbxref=GeneID:100861532,HGNC:HGNC:53530;gbkey=rRNA;gene=RNA45SN5;product=RNA%2C 45S pre-ribosomal N5
+NR_046235.3	RefSeq	exon	1	13357	.	+	.	ID=id-RNA45SN5;Parent=gene-RNA45SN5;Dbxref=GeneID:100861532,HGNC:HGNC:53530;gbkey=exon;gene=RNA45SN5;inference=alignment:Splign:2.1.0
+NR_046235.3	RefSeq	sequence_feature	3655	5523	.	+	.	ID=id-RNA45SN5-2;Dbxref=GeneID:100861532,HGNC:HGNC:53530;Note=18S rRNA;gbkey=misc_feature;gene=RNA45SN5
+NR_046235.3	RefSeq	sequence_feature	6601	6757	.	+	.	ID=id-RNA45SN5-3;Dbxref=GeneID:100861532,HGNC:HGNC:53530;Note=5.8S rRNA;gbkey=misc_feature;gene=RNA45SN5
+NR_046235.3	RefSeq	sequence_feature	7925	12994	.	+	.	ID=id-RNA45SN5-4;Dbxref=GeneID:100861532,HGNC:HGNC:53530;Note=28S rRNA;gbkey=misc_feature;gene=RNA45SN5
+

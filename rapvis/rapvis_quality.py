@@ -60,6 +60,27 @@ def mapping(fi):
 	prefix = os.path.join(fi, 'merge_mapping')
 	bplot(df, prefix)
 
+###############################
+def rRNAratio(fi):
+	'''
+	stat the ratio of rRNA
+
+	'''
+	files = sorted(glob.glob("%s/*/*rRNA.count" % fi))
+	d = {}
+	sList = []
+	for i in files:
+		name = i.split("/")[-1].split("_")[0]
+		with open(i) as f:
+			for line in f:
+				line = line.strip().split()
+				d[line[0]] = int(line[1])
+		s = Series(d, name=name)
+		sList.append(s)
+
+	df = DataFrame(sList)
+	prefix = os.path.join(fi, 'merge_rRNA')
+	bplot(df, prefix)
 
 ###############################
 def bplot(df, prefix):

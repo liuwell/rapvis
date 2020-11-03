@@ -8,6 +8,10 @@ import os
 
 def process(R1, R2, output, adapter, threads, species, minlen, trim5):
 	
+	'''
+	trim adapter by trimmomatic, mapping to genome by hisat2, transcript asemble by stringtie
+	'''
+
 	file_name = R1.split("/")[-1].split("_")[0]
 	outdir = os.path.join(output, file_name)
 
