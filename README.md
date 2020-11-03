@@ -21,12 +21,14 @@ Sevral external software were depended for rapvis:
 
 
 ***
-#### install
+#### Install
 
 ```python
 pip install rapvis
 ```
 
-
-
+#### Command
+```bash
+rapvis_submit.py -i rawdata/ -o processed -s Human -a universal -p 5 -t 2 --minlen 25 --trim5 3 --merge --rRNA
+```
 
