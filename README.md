@@ -2,7 +2,7 @@
 
 ***
 #### Dependency 
-Sevral external software were needed for rapvis:
+Sevral external software were depended for rapvis:
 
   + trimmomatic 
   + hisat2 
@@ -11,3 +11,14 @@ Sevral external software were needed for rapvis:
   + samtools
   + STAR
   + bedtools
+
+***
+#### install
+
+```python
+pip install rapvis
+```
+
+
+
+
