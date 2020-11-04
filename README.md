@@ -18,17 +18,17 @@ Sevral external software were depended for rapvis:
 + numpy
 + matplotlib
 + seaborn
-
++ GSEApy
 
 ***
 #### Install
 
-```python
+```
 pip install rapvis
 ```
 
-#### Command
-```bash
+#### Usage
+```
 rapvis_submit.py -i rawdata/ -o processed -s Human -a universal -p 5 -t 2 --minlen 25 --trim5 3 --merge --rRNA
 ```
 
