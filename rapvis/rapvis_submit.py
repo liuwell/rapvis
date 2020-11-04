@@ -257,9 +257,9 @@ if __name__ == '__main__':
 	parser.add_argument('--minlen', default=35, type=int, help='discard reads shorter than minlen (default: 35)')
 	parser.add_argument('--trim5', default=0, type=int, help='remove bases from the begining of each read (default:0)')
 	parser.add_argument('-q', default='b1.q', choices=['b1.q', 'g1.q'], type=str, help='bind job to queue(s)')
-	parser.add_argument('-m', '--merge', action='store_true', help='merge gene expression profiles and plot distribution pattern')
-	parser.add_argument('-v', '--version', action='version', version='%(prog)s 0.0.1')
+	parser.add_argument('--merge', action='store_true', help='merge gene expression profiles and plot distribution pattern')
 	parser.add_argument('--rRNA', action='store_true', help='whether mapping to rRNA')
+	parser.add_argument('-v', '--version', action='version', version='%(prog)s 0.0.2')
 
 	args = parser.parse_args()
 
