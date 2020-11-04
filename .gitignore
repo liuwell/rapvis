@@ -2,3 +2,4 @@
 rapvis/__pycache__
 build
 dist
+rapvis/*pyc
