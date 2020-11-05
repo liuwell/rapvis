@@ -29,6 +29,10 @@ def process(fi, output, adapter, threads, species, minlen, trim5):
 
 	#f_num=0
 	
+	# set the path
+	realpath = sys.path[0]
+	index_path = "/home/liuwei/genome/hisat2_index/"
+	
 	for i in f_index:
 
 		R1 = files[i]
@@ -56,17 +60,17 @@ def process(fi, output, adapter, threads, species, minlen, trim5):
 		print("\nProcessing: %s, %s" % (R1,R2))
 	
 		### trimmomatic
-		subprocess.call("trimmomatic PE -threads %d -phred33 %s %s %s %s %s %s ILLUMINACLIP:/sibcb1/wuliganglab1/liuwei/genome/adaptor/%s:1:30:10:5 SLIDINGWINDOW:4:20 MINLEN:%d HEADCROP:%d 2> %s" % (threads, R1, R2, out_R1_p, out_R1_u, out_R2_p, out_R2_u, adapter, minlen, trim5, out_log), shell=True)
+		subprocess.call("trimmomatic PE -threads %d -phred33 %s %s %s %s %s %s ILLUMINACLIP:%s/../library/adapter/%s:1:30:10:5 SLIDINGWINDOW:4:20 MINLEN:%d HEADCROP:%d 2> %s" % (threads, R1, R2, out_R1_p, out_R1_u, out_R2_p, out_R2_u, realpath, adapter, minlen, trim5, out_log), shell=True)
 		
 		### Mapping by hisat2
 		SummaryFile = prefix + "_hisat_summary.txt"
 		HisatOut = prefix + "_hisat_sort.bam"
-		subprocess.call("hisat2 -p %d -x /sibcb1/wuliganglab1/liuwei/genome/hisat2_index/%s/genome_tran -1 %s -2 %s -U %s,%s -t --dta --summary-file %s --new-summary|samtools sort -@ %d -m 10G -o %s" % (threads, species, out_R1_p, out_R2_p, out_R1_u, out_R2_u, SummaryFile, threads, HisatOut), shell=True)
+		subprocess.call("hisat2 -p %d -x %s/%s/genome_tran -1 %s -2 %s -U %s,%s -t --dta --summary-file %s --new-summary|samtools sort -@ %d -m 10G -o %s" % (threads, index_path, species, out_R1_p, out_R2_p, out_R1_u, out_R2_u, SummaryFile, threads, HisatOut), shell=True)
 	
 		### Asemble by stringtie
 		stringtieGTF = prefix + '_stringtie.gtf'
 		stringtieGene = prefix + '_gene_abund.tab'
-		subprocess.call("stringtie %s -e -G /sibcb1/wuliganglab1/liuwei/genome/hisat2_index/%s/annotation.gtf -p %d -o %s -A %s" % (HisatOut, species, threads, stringtieGTF, stringtieGene), shell=True)
+		subprocess.call("stringtie %s -e -G %s/%s/annotation.gtf -p %d -o %s -A %s" % (HisatOut, index_path, species, threads, stringtieGTF, stringtieGene), shell=True)
 
 
 if __name__ == '__main__':
