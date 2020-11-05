@@ -26,7 +26,7 @@ def process(fi, output, adapter, threads, species, minlen, trim5):
 		if f.endswith('fastq') or f.endswith('fastq.gz') or f.endswith('fq.gz') or f.endswith('fq'):
 			files.append(f)
 	files=sorted(files)
-	f_index=list(np.arange(0, len(files), 2))[0:2]
+	f_index=list(np.arange(0, len(files), 2))
 
 	#f_num=0
 	
@@ -72,7 +72,13 @@ def process(fi, output, adapter, threads, species, minlen, trim5):
 		stringtieGTF = prefix + '_stringtie.gtf'
 		stringtieGene = prefix + '_gene_abund.tab'
 		subprocess.call("stringtie %s -e -G %s/%s/annotation.gtf -p %d -o %s -A %s" % (HisatOut, index_path, species, threads, stringtieGTF, stringtieGene), shell=True)
-
+	
+	else:
+	
+		fi = merge_profiles(args.output)
+		gene_dis(fi, args.output, args.species)
+		quality(args.output)
+		mapping(args.output)
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description='For RNAseq processing')
@@ -93,12 +99,6 @@ if __name__ == '__main__':
 
 	process(args.input, args.output, args.adapter, args.threads, args.species, args.minlen, args.trim5)
 
-	###
-	fi = merge_profiles(args.output)
-	gene_dis(fi, args.output, args.species)
-	quality(args.output)
-	mapping(args.output)
-	
 	###
 	end_time = time.time()
 	run_time = round((end_time - start_time)/60, 5)
