@@ -167,8 +167,9 @@ def gene_dis(fi, output, species):
 	data_melt.index = data_melt['gene']
 	
 	### Gene species by gene type
+	index_path = "/home/liuwei/genome/hisat2_index"
 	gene_type = {}
-	with open("/sibcb1/wuliganglab1/liuwei/genome/hisat2_index/%s/gene.type" % species) as f:
+	with open("%s/%s/gene.type" % (index_path,species)) as f:
 		for line in f:
 			line=line.strip().split("\t")
 			gene_type[line[0]] = line[1]

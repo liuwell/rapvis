@@ -6,6 +6,7 @@ import numpy as np
 import subprocess
 import os
 import time
+import sys
 
 from rapvis_merge import merge_profiles
 from rapvis_submit import current_time
