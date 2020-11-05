@@ -14,7 +14,7 @@ Sevral external software were depended for rapvis:
 
 #### Mandatory
 + python3.6+
-+ pandas
++ pandas >= 1.1.2
 + numpy
 + matplotlib
 + seaborn
