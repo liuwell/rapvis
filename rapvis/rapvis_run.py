@@ -12,8 +12,10 @@ from rapvis_merge import merge_profiles
 from rapvis_submit import current_time
 from rapvis_submit import gene_dis
 from rapvis_quality import *
+import rapvis_rRNA
 
-def process(fi, output, adapter, threads, species, minlen, trim5):
+
+def process(fi, output, adapter, threads, species, minlen, trim5, rRNA):
 	
 	'''
 	trim adapter by trimmomatic, mapping to genome by hisat2, transcript asemble by stringtie
@@ -72,13 +74,21 @@ def process(fi, output, adapter, threads, species, minlen, trim5):
 		stringtieGTF = prefix + '_stringtie.gtf'
 		stringtieGene = prefix + '_gene_abund.tab'
 		subprocess.call("stringtie %s -e -G %s/%s/annotation.gtf -p %d -o %s -A %s" % (HisatOut, index_path, species, threads, stringtieGTF, stringtieGene), shell=True)
-	
+		
+		### for rRNA
+		if rRNA:
+			rapvis_rRNA.rRNA(R1, R2, output, threads)	
+
 	else:
 	
 		fi = merge_profiles(args.output)
-		gene_dis(fi, args.output, args.species)
-		quality(args.output)
-		mapping(args.output)
+		gene_dis(fi, output, species)
+		quality(output)
+		mapping(output)
+		
+		### for rRNA
+		if rRNA:
+			rRNAratio(output)
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser(description='For RNAseq processing')
@@ -90,6 +100,7 @@ if __name__ == '__main__':
 	parser.add_argument('-a', '--adapter', default='nextera', choices=['nextera', 'universal'], type=str, help='choose illumina adaptor (default: nextera)')
 	parser.add_argument('--minlen', default=35, type=int, help='discard reads shorter than LEN (default: 35)')
 	parser.add_argument('--trim5', default=0, type=int, help='remove bases from the begining of each read (default:0)')
+	parser.add_argument('--rRNA', action='store_true', help='whether mapping to rRNA')
 	parser.add_argument('-v', '--version', action='version', version='%(prog)s 0.0.2')
 
 	args = parser.parse_args()
@@ -97,7 +108,7 @@ if __name__ == '__main__':
 	print("\n%s ..... Start RNAseq processing" % (current_time()))
 	start_time = time.time()
 
-	process(args.input, args.output, args.adapter, args.threads, args.species, args.minlen, args.trim5)
+	process(args.input, args.output, args.adapter, args.threads, args.species, args.minlen, args.trim5, args.rRNA)
 
 	###
 	end_time = time.time()
