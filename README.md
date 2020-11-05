@@ -13,7 +13,7 @@ Sevral external software were depended for rapvis:
 + bedtools
 
 #### Mandatory
-+ python3.6+
++ python >= 3.6.5
 + pandas >= 1.1.2
 + numpy
 + matplotlib
