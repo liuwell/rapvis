@@ -10,8 +10,8 @@ import sys
 
 from rapvis_merge import merge_profiles
 from rapvis_submit import current_time
-from rapvis_submit import gene_dis
 from rapvis_quality import *
+from rapvis_gene_dis import *
 import rapvis_rRNA
 
 
