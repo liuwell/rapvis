@@ -17,7 +17,7 @@ def current_time():
 	return datetime.datetime.now().strftime('%b-%d-%Y %H:%M:%S')
 
 ###
-def gene_dis(fi, output, species):
+def gene_dis(fi, output, libpath):
 	
 	print("%s, Caculating gene expression pattern ... " % current_time())
 
@@ -31,7 +31,7 @@ def gene_dis(fi, output, species):
 	### Gene species by gene type
 	index_path = "/home/liuwei/genome/hisat2_index"
 	gene_type = {}
-	with open("%s/%s/gene.type" % (index_path,species)) as f:
+	with open("%s/gene.type" % libpath) as f:
 		for line in f:
 			line=line.strip().split("\t")
 			gene_type[line[0]] = line[1]

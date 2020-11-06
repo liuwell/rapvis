@@ -15,7 +15,7 @@ from rapvis_gene_dis import *
 import rapvis_rRNA
 
 
-def process(fi, output, adapter, threads, species, minlen, trim5, rRNA):
+def process(fi, output, adapter, threads, libpath, minlen, trim5, rRNA):
 	
 	'''
 	trim adapter by trimmomatic, mapping to genome by hisat2, transcript asemble by stringtie
@@ -34,7 +34,7 @@ def process(fi, output, adapter, threads, species, minlen, trim5, rRNA):
 	
 	# set the path
 	realpath = sys.path[0]
-	index_path = "/home/liuwei/genome/hisat2_index/"
+	#index_path = "/home/liuwei/genome/hisat2_index/"
 	
 	for i in f_index:
 
@@ -68,12 +68,12 @@ def process(fi, output, adapter, threads, species, minlen, trim5, rRNA):
 		### Mapping by hisat2
 		SummaryFile = prefix + "_hisat_summary.txt"
 		HisatOut = prefix + "_hisat_sort.bam"
-		subprocess.call("hisat2 -p %d -x %s/%s/genome_tran -1 %s -2 %s -U %s,%s -t --dta --summary-file %s --new-summary|samtools sort -@ %d -m 10G -o %s" % (threads, index_path, species, out_R1_p, out_R2_p, out_R1_u, out_R2_u, SummaryFile, threads, HisatOut), shell=True)
+		subprocess.call("hisat2 -p %d -x %s/genome_tran -1 %s -2 %s -U %s,%s -t --dta --summary-file %s --new-summary|samtools sort -@ %d -m 10G -o %s" % (threads, libpath, out_R1_p, out_R2_p, out_R1_u, out_R2_u, SummaryFile, threads, HisatOut), shell=True)
 	
 		### Asemble by stringtie
 		stringtieGTF = prefix + '_stringtie.gtf'
 		stringtieGene = prefix + '_gene_abund.tab'
-		subprocess.call("stringtie %s -e -G %s/%s/annotation.gtf -p %d -o %s -A %s" % (HisatOut, index_path, species, threads, stringtieGTF, stringtieGene), shell=True)
+		subprocess.call("stringtie %s -e -G %s/annotation.gtf -p %d -o %s -A %s" % (HisatOut, libpath, threads, stringtieGTF, stringtieGene), shell=True)
 		
 		### for rRNA
 		if rRNA:
@@ -82,7 +82,7 @@ def process(fi, output, adapter, threads, species, minlen, trim5, rRNA):
 	else:
 	
 		fi = merge_profiles(args.output)
-		gene_dis(fi, output, species)
+		gene_dis(fi, output, libpath)
 		quality(output)
 		mapping(output)
 		
@@ -96,7 +96,8 @@ if __name__ == '__main__':
 	parser.add_argument('-i', '--input', required=True, help='the input data')
 	parser.add_argument('-o', '--output', default = 'processed_data', help = 'output directory (default: processed_data)')
 	parser.add_argument('-p', '--threads', default=5, type=int, help='number of threads (CPUs) to use (default: 5)')
-	parser.add_argument('-s', '--species', default='Human', choices=['Human', 'Mouse', 'Rat', 'Rabbit', 'GoldenHamster', 'Zebrafish'], type=str, help='choose reference species for mapping and annotaion (default: Human)')
+	#parser.add_argument('-s', '--species', default='Human', choices=['Human', 'Mouse', 'Rat', 'Rabbit', 'GoldenHamster', 'Zebrafish'], type=str, help='choose reference species for mapping and annotaion (default: Human)')
+	parser.add_argument('-lib', '--libraryPath', type=str, help='choose reference species for mapping and annotaion')
 	parser.add_argument('-a', '--adapter', default='nextera', choices=['nextera', 'universal'], type=str, help='choose illumina adaptor (default: nextera)')
 	parser.add_argument('--minlen', default=35, type=int, help='discard reads shorter than LEN (default: 35)')
 	parser.add_argument('--trim5', default=0, type=int, help='remove bases from the begining of each read (default:0)')
@@ -108,7 +109,7 @@ if __name__ == '__main__':
 	print("\n%s ..... Start RNAseq processing" % (current_time()))
 	start_time = time.time()
 
-	process(args.input, args.output, args.adapter, args.threads, args.species, args.minlen, args.trim5, args.rRNA)
+	process(args.input, args.output, args.adapter, args.threads, args.libraryPath, args.minlen, args.trim5, args.rRNA)
 
 	###
 	end_time = time.time()
