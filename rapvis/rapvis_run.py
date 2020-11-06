@@ -9,9 +9,9 @@ import time
 import sys
 
 from rapvis_merge import merge_profiles
-from rapvis_submit import current_time
+from rapvis_general import current_time
+from rapvis_gene_dis import gene_dis
 from rapvis_quality import *
-from rapvis_gene_dis import *
 import rapvis_rRNA
 
 
@@ -30,8 +30,6 @@ def process(fi, output, adapter, threads, libpath, minlen, trim5, rRNA):
 	files=sorted(files)
 	f_index=list(np.arange(0, len(files), 2))
 
-	#f_num=0
-	
 	# set the path
 	realpath = sys.path[0]
 	#index_path = "/home/liuwei/genome/hisat2_index/"
@@ -91,7 +89,7 @@ def process(fi, output, adapter, threads, libpath, minlen, trim5, rRNA):
 			rRNAratio(output)
 
 if __name__ == '__main__':
-	parser = argparse.ArgumentParser(description='For RNAseq processing')
+	parser = argparse.ArgumentParser(description='A tool for RNAseq processing and visualization')
 
 	parser.add_argument('-i', '--input', required=True, help='the input data')
 	parser.add_argument('-o', '--output', default = 'processed_data', help = 'output directory (default: processed_data)')
@@ -101,7 +99,7 @@ if __name__ == '__main__':
 	parser.add_argument('-a', '--adapter', default='nextera', choices=['nextera', 'universal'], type=str, help='choose illumina adaptor (default: nextera)')
 	parser.add_argument('--minlen', default=35, type=int, help='discard reads shorter than LEN (default: 35)')
 	parser.add_argument('--trim5', default=0, type=int, help='remove bases from the begining of each read (default:0)')
-	parser.add_argument('--rRNA', action='store_true', help='whether mapping to rRNA')
+	parser.add_argument('--rRNA', action='store_true', help='whether mapping to rRNA(Human)')
 	parser.add_argument('-v', '--version', action='version', version='%(prog)s 0.0.2')
 
 	args = parser.parse_args()

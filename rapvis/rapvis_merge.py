@@ -8,7 +8,7 @@ import glob
 import os
 
 ### local function
-from rapvis_submit import current_time
+from rapvis_general import current_time
 
 
 def merge_profiles(output):

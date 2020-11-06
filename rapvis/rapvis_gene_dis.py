@@ -10,11 +10,8 @@ import os
 import re
 
 ###
-def current_time():
-	'''
-	get current time
-	'''
-	return datetime.datetime.now().strftime('%b-%d-%Y %H:%M:%S')
+from rapvis_general import current_time
+
 
 ###
 def gene_dis(fi, output, libpath):
