@@ -42,23 +42,51 @@ def mapping(fi):
 	'''
 	
 	files = sorted(glob.glob("%s/*/*hisat_summary.txt" % fi))
-	sList = []
-	for f in files:
-		name = f.split("/")[-1].split("_")[0]
-		f=open(f,'r')
-		lines = f.readlines()
-		x = [x.strip().split(' ')[-2] for x in lines]
-		unmap = int(x[2])
-		uniqmap = int(x[3]) + int(x[5])
-		multimap = int(x[4])
-		 
-		s = Series([uniqmap, multimap, unmap], index=["UniqMapped", "MultipleMapped", "UnMapped"], name=name)
-		sList.append(s)
-		f.close()
+	files2 = sorted(glob.glob("%s/*/*Log.final.out" % fi))
 	
-	df = DataFrame(sList)
-	prefix = os.path.join(fi, 'merge_mapping')
-	bplot(df, prefix)
+	print(files)
+	print(files2)
+	if len(files) > 0 :
+		sList = []
+		for f in files:
+			name = f.split("/")[-1].split("_")[0]
+			f=open(f,'r')
+			lines = f.readlines()
+			x = [x.strip().split(' ')[-2] for x in lines]
+			unmap = int(x[2])
+			uniqmap = int(x[3]) + int(x[5])
+			multimap = int(x[4])
+			 
+			s = Series([uniqmap, multimap, unmap], index=["UniqueMapped", "MultipleMapped", "UnMapped"], name=name)
+			sList.append(s)
+			f.close()
+		
+		df = DataFrame(sList)
+		prefix = os.path.join(fi, 'merge_mapping')
+		bplot(df, prefix)
+
+	# for STAR
+	elif len(files2) > 0 :
+		sList = []
+		d = {}
+		for i in files2:
+			name = i.split("/")[-1].split("_")[0]
+			f=open(i,'r')
+			lines = f.readlines()
+			lines = [lines[5], lines[8], lines[23], lines[25]]
+			x = [x.strip().split('\t')[-1] for x in lines]
+			total = int(x[0])
+			unique = int(x[1])
+			multiple = int(x[2]) + int(x[3])
+			unmap = total - unique - multiple
+			s = Series([unique, multiple, unmap], index=["UniqueMapped", "MultipleMapped", "UnMapped"], name=name)
+			sList.append(s)
+			f.close()
+		
+		df = DataFrame(sList)
+		prefix = os.path.join(fi, 'merge_mapping')
+		bplot(df, prefix)
+
 
 ###############################
 def rRNAratio(fi):
