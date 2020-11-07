@@ -2,6 +2,7 @@
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
 import pandas as pd
+import numpy as np
 from pandas.api.types import CategoricalDtype
 from scipy import stats
 import seaborn as sns
