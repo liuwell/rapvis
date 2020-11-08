@@ -37,15 +37,14 @@ def quality(fi):
 def mapping(fi):
 	
 	'''
-	stat hisat2 mapping summary result
+	stat hisat2 or STAR mapping summary result
 
 	'''
 	
 	files = sorted(glob.glob("%s/*/*hisat_summary.txt" % fi))
 	files2 = sorted(glob.glob("%s/*/*Log.final.out" % fi))
 	
-	print(files)
-	print(files2)
+	# for hisat2
 	if len(files) > 0 :
 		sList = []
 		for f in files:

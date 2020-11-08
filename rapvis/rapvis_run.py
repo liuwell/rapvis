@@ -83,7 +83,7 @@ def process(fi, output, adapter, threads, libpath, mapper, minlen, trim5, rRNA):
 		elif mapper == 'STAR':
 			# STAR
 			STARprefix = prefix + "_STAR_"
-			subprocess.call("STAR --runThreadN %d --outSAMtype BAM SortedByCoordinate --genomeDir %s --readFilesIn %s %s --readFilesCommand zcat --outFileNamePrefix %s --quantMode GeneCounts --outFilterScoreMinOverLread 0.1 --outFilterMatchNminOverLread 0.1 --outFilterMatchNmin 0  --outFilterMismatchNmax 2" % (threads, libpath, R1, R2, STARprefix), shell=True)		
+			subprocess.call("STAR --runThreadN %d --outSAMtype BAM SortedByCoordinate --genomeDir %s --readFilesIn %s %s --readFilesCommand zcat --outFileNamePrefix %s --quantMode GeneCounts --outFilterScoreMinOverLread 0.1 --outFilterMatchNminOverLread 0.1 --outFilterMatchNmin 0  --outFilterMismatchNmax 2" % (threads, libpath, out_R1_p, out_R2_p, STARprefix), shell=True)		
 			
 			# Asemble by stringtie
 			stringtieGTF = prefix + '_stringtie.gtf'
@@ -111,7 +111,7 @@ if __name__ == '__main__':
 	parser.add_argument('-p', '--threads', default=5, type=int, help='number of threads (CPUs) to use (default: 5)')
 	#parser.add_argument('-s', '--species', default='Human', choices=['Human', 'Mouse', 'Rat', 'Rabbit', 'GoldenHamster', 'Zebrafish'], type=str, help='choose reference species for mapping and annotaion (default: Human)')
 	parser.add_argument('-lib', '--libraryPath', type=str, help='choose reference species for mapping and annotaion')
-	parser.add_argument('-m', '--mapper', default='hisat2', choices=['hisat2', 'STAR'], type=str, help='choose the mapping program')
+	parser.add_argument('-m', '--mapper', default='hisat2', choices=['hisat2', 'STAR'], type=str, help='choose the mapping program (default: hisat2)')
 	parser.add_argument('-a', '--adapter', default='nextera', choices=['nextera', 'universal'], type=str, help='choose illumina adaptor (default: nextera)')
 	parser.add_argument('--minlen', default=35, type=int, help='discard reads shorter than LEN (default: 35)')
 	parser.add_argument('--trim5', default=0, type=int, help='remove bases from the begining of each read (default:0)')

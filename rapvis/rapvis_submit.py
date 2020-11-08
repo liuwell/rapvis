@@ -32,7 +32,7 @@ def GetRunningTasks(name):
 	return n	
 
 
-def SubmitTask(fi, output, adapter, threads, libpath, tasks, name, minlen, trim5, queue, rRNA):
+def SubmitTask(fi, output, adapter, threads, libpath, mapper, tasks, name, minlen, trim5, queue, rRNA):
 	'''
 	submit tasks to the server
 	'''
@@ -75,7 +75,7 @@ def SubmitTask(fi, output, adapter, threads, libpath, tasks, name, minlen, trim5
 				f.write("source ~/.bash_profile\n")
 
 				realpath = sys.path[0]
-				f.write("python %s/rapvis_process.py -f1 %s -f2 %s -o %s -a %s -p %d -lib %s --minlen %d --trim5 %d\n" %(realpath, R1, R2, output, adapter, threads, libpath, minlen, trim5))
+				f.write("python %s/rapvis_process.py -f1 %s -f2 %s -o %s -a %s -p %d -lib %s -m %s --minlen %d --trim5 %d\n" %(realpath, R1, R2, output, adapter, threads, libpath, mapper, minlen, trim5))
 				
 				if rRNA:
 					f.write("python %s/rapvis_rRNA.py -f1 %s -f2 %s -o %s -p %d\n" % (realpath, R1, R2, output, threads))
@@ -151,6 +151,7 @@ if __name__ == '__main__':
 	parser.add_argument('-o', '--output', default = 'processed_data', help = 'output directory (default: processed_data)')
 	#parser.add_argument('-s', '--species', default='Human', choices=['Human', 'Mouse', 'Rat', 'Rabbit', 'GoldenHamster', 'Zebrafish'], type=str, help='choose reference species for mapping and annotaion (default: Human)')
 	parser.add_argument('-lib', '--libraryPath', type=str, help='set the path of reference species for mapping and annotaion')
+	parser.add_argument('-m', '--mapper', default='hisat2', choices=['hisat2', 'STAR'], type=str, help='choose the mapping program (default: hisat2)')
 	parser.add_argument('-a', '--adapter', default='nextera', choices=['nextera', 'universal'], type=str, help='choose illumina adaptor (default: nextera)')
 	parser.add_argument('-p', '--threads', default=5, type=int, help='number of threads (CPUs) to use (default: 5)')
 	parser.add_argument('-t', '--tasks', default=2, type=int, help='number of submitted tasks (default: 2)')
@@ -168,7 +169,7 @@ if __name__ == '__main__':
 	print("\n%s ..... Start RNAseq processing" % (current_time()))
 	start_time = time.time()
 
-	SubmitTask(args.input, args.output, args.adapter, args.threads, args.libraryPath, args.tasks, args.name, args.minlen, args.trim5, args.q, args.rRNA)
+	SubmitTask(args.input, args.output, args.adapter, args.threads, args.libraryPath, args.mapper, args.tasks, args.name, args.minlen, args.trim5, args.q, args.rRNA)
 	
 	#if args.merge:
 	fi = merge_profiles(args.name, args.output)
