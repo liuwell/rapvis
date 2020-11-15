@@ -9,6 +9,7 @@ import seaborn as sns
 import datetime
 import os
 import re
+import math
 
 ###
 from rapvis_general import current_time
@@ -51,28 +52,38 @@ def gene_dis(fi, output, libpath):
 	cat_type = CategoricalDtype(categories=data.columns[1:], ordered =True)
 	data_melt2['sample'] = data_melt2['sample'].astype(cat_type)
 
-	aspect = int(data.shape[1])
-	if aspect >3:
-		aspect = np.log(aspect) - 1 
-	else :
-		aspect = aspect/3
+	
+	# set width and height
+	width = int(data.shape[0])
+	height = 6
+	fontsize =20
+	if width >= 8 :
+		width = math.log(width, 2) * 2 ### adjust the width of barplot
+	aspect = width/width
+	#aspect = int(data.shape[1])
+	#if aspect >3:
+		#aspect = np.log(aspect) - 1 
+	#if aspect >1:
+	#	aspect = np.log(aspect)
+	#else :
+	#	aspect = aspect
 
 	colors = list(reversed(sns.color_palette()[0:5]))
 	hue_order = ["others", "pseudogene", "antisense", "lincRNA", "protein_coding"]
-	sns.displot(data_melt2, x="sample", hue="gene_type", hue_order=hue_order, palette=colors, multiple="stack", shrink=.8, height=4, aspect=aspect)
+	sns.displot(data_melt2, x="sample", hue="gene_type", hue_order=hue_order, palette=colors, multiple="stack", shrink=.8, height=height, aspect=aspect)
 	plt.xticks(rotation=90)
-	plt.xlabel('Samples', fontsize=15)
-	plt.ylabel('Gene species', fontsize=15)
+	plt.xlabel('Samples', fontsize=fontsize)
+	plt.ylabel('Gene species', fontsize=fontsize)
 
 	out_box = prefix + "_species_type.pdf"
 	plt.savefig(out_box, bbox_inches='tight')
 	plt.close()
 	
 	### Gene species
-	sns.displot(data_melt, x="sample", shrink=.8, height=4, aspect=aspect)
+	sns.displot(data_melt, x="sample", shrink=.8, height=height, aspect=aspect)
 	plt.xticks(rotation=90)
-	plt.xlabel('Samples', fontsize=15)
-	plt.ylabel('Gene numbers', fontsize=15)
+	plt.xlabel('Samples', fontsize=fontsize)
+	plt.ylabel('Gene numbers', fontsize=fontsize)
 
 	out_box = prefix + "_species.pdf"
 	plt.savefig(out_box, bbox_inches='tight')
@@ -84,10 +95,10 @@ def gene_dis(fi, output, libpath):
 	data_melt['ExpressionInterval'] = values
 	#data_melt.loc[:,'ExpressionInterval'] = values
 	
-	sns.displot(data_melt, x="sample", hue="ExpressionInterval", multiple="stack", shrink=.8, height=4, aspect=aspect)
+	sns.displot(data_melt, x="sample", hue="ExpressionInterval", multiple="stack", shrink=.8, height=height, aspect=aspect)
 	plt.xticks(rotation=90)
-	plt.xlabel('Samples', fontsize=15)
-	plt.ylabel('Gene species', fontsize=15)
+	plt.xlabel('Samples', fontsize=fontsize)
+	plt.ylabel('Gene species', fontsize=fontsize)
 
 	out_box = prefix + "_species_EI.pdf"
 	plt.savefig(out_box, bbox_inches='tight')
