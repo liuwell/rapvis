@@ -56,7 +56,7 @@ def gene_dis(fi, output, libpath):
 	# set width and height
 	width = int(data.shape[0])
 	height = 6
-	fontsize =20
+	fontsize =15
 	if width >= 8 :
 		width = math.log(width, 2) * 2 ### adjust the width of barplot
 	aspect = width/width
