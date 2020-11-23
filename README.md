@@ -19,6 +19,7 @@ Sevral external software were depended for rapvis:
 + matplotlib
 + seaborn
 + GSEApy
++ rpy2
 
 ***
 #### Install
