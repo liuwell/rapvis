@@ -25,7 +25,13 @@ Sevral external software were depended for rapvis:
 #### Install
 
 ```
-pip install rapvis
+# clone remote repository
+git clone https://github.com/liuwell/rapvis.git
+# install required python pacakge
+pip install -r requirements.txt
+# add execution path
+echo "path_to_rapvis" >> ~/.bashrc
+source ~/.bashrc
 ```
 
 #### Usage
