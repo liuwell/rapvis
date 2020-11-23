@@ -40,9 +40,27 @@ $ pip install -r requirements.txt
 $ echo "current_dir/rapvis" >> ~/.bashrc
 $ source ~/.bashrc
 ```
-
+#### Download annotation
+```bash
+wget www.test.com/index.gz
+```
 #### Usage
+#### 1. Submit the tasks to cluster
 ```
 rapvis_submit.py -i rawdata/ -o processed -s Human -a universal -p 5 -t 2 --minlen 25 --trim5 3 --merge --rRNA
+```
+
+#### 2. Run in local
+```bash
+rapvis_run.py -i rawdata/ -o processed -s Human -a universal -p 5 -t 2 --minlen 25 --trim5 3 --merge --rRNA
+```
+#### 3. Caculated differently expressed genes
+```bash
+rapvis_DE.py -i input -p output
+```
+
+#### 4. The Correlation coefficient between samples
+```bash
+rapvids_corr.py -i inout -o output
 ```
 
