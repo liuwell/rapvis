@@ -49,14 +49,21 @@ if len(names_to_install) > 0:
 ### get differently expressed gene by R package 'limma'
 from rpy2 import robjects
 robjects.r('''
-			r_limma <- function(fi, fo, nwt, nko){
-			library(limma)
-			data <- read.csv(fi, sep="\t", header=T, row.names=1)
-			data <- data[rowMeans(data)>0.5,]
-			data <- log2(data+1)
+			r_limma <- function(fi, fo, nwt, nko, norm){
 			
+			library(limma)
+			
+			data <- read.csv(fi, sep="\t", header=T, row.names=1)
 			condition <-factor(c(rep("wt", nwt),rep("ko", nko)), levels=c("wt", "ko"))
 			design <- model.matrix(~condition)
+			
+			data <- data[rowMeans(data)>0.5,]
+			if(norm){
+				data <- voom(data, design, plot = FALSE)
+			}else{
+				data <- log2(data+1)
+			}
+			
 			fit <- lmFit(data, design)
 			fit <- eBayes(fit)
 			 
@@ -68,7 +75,7 @@ robjects.r('''
 
 r_func = robjects.r['r_limma']
 
-def DE(fi, wt, ko, prefix, species):
+def DE(fi, wt, ko, prefix, norm, go, species):
 	
 	wt = wt.split(':')
 	wt = int(wt[1]) - int(wt[0])
@@ -77,7 +84,7 @@ def DE(fi, wt, ko, prefix, species):
 	ko = int(ko[1]) - int(ko[0])
 	
 	out = prefix + "_DE_all.txt"
-	r_func(fi, out, wt, ko)
+	r_func(fi, out, wt, ko, norm)
 	
 	data = pd.read_table(fi, header=0, index_col=0)
 	DE = pd.read_table(out, header=0, index_col=0)
@@ -121,52 +128,51 @@ def DE(fi, wt, ko, prefix, species):
 
 	
 	### GO, enrochr
-	gene_number = len(DE.index)
-	gene_up = list(DE[DE.sig=='up'].index)
-	gene_down = list(DE[DE.sig=='down'].index)
+	if go:
+		gene_number = len(DE.index)
+		gene_up = list(DE[DE.sig=='up'].index)
+		gene_down = list(DE[DE.sig=='down'].index)
+		
+		### local model of GO analysis
+		# un-regulated
+		outdir1 = prefix + '_enrichr_gene_up'
+		enr_up = gp.enrichr(gene_list=gene_up,
+					 organism=species, description='up-regulated genes',
+	                 gene_sets='GO_Biological_Process_2018',
+	                 background=gene_number, # or the number of genes, e.g 20000
+	                 outdir=outdir1,
+	                 cutoff=0.05, # only used for testing.
+					 format='pdf', figsize=(8, 7), top_term=20, no_plot=False, 
+	                 verbose=True)
+		
+		# down-regulated
+		outdir2 = prefix + '_enrichr_gene_down'
+		enr_down = gp.enrichr(gene_list=gene_down,
+					 organism=species, description='down-regulated genes',
+	                 gene_sets='GO_Biological_Process_2018',
+					 background=gene_number, # or the number of genes, e.g 20000
+	                 outdir=outdir2,
+	                 cutoff=0.05, # only used for testing.
+					 format='pdf', figsize=(8, 7), top_term=20, no_plot=False, 
+	                 verbose=True)
+
+		# to save your figure, make sure that ``ofname`` is not None
+		#barplot(enr_ip.res2d,title='KEGG_2013', ofname='test_GO.pdf')
 	
-	### local model of GO analysis
-	# un-regulated
-	outdir1 = prefix + '_enrichr_gene_up'
-	enr_up = gp.enrichr(gene_list=gene_up,
-				 organism=species, description='up-regulated genes',
-                 gene_sets='GO_Biological_Process_2018',
-                 background=gene_number, # or the number of genes, e.g 20000
-                 outdir=outdir1,
-                 cutoff=0.05, # only used for testing.
-				 format='pdf', figsize=(8, 7), top_term=20, no_plot=False, 
-                 verbose=True)
+		### enrichr, Command line
+		#gseapy enrichr -i data/gene_list.txt --ds BP2017 -g GO_Biological_Process_2017 -v -o test_enrichr_BP
+		### GSEA, Command line
+		#gseapy gsea -d data/P53_resampling_data.txt -g KEGG_2016 -c data/P53.cls -o gsea_report -v -t phenotype
 	
-	# down-regulated
-	outdir2 = prefix + '_enrichr_gene_down'
-	enr_down = gp.enrichr(gene_list=gene_down,
-				 organism=species, description='down-regulated genes',
-                 gene_sets='GO_Biological_Process_2018',
-				 background=gene_number, # or the number of genes, e.g 20000
-                 outdir=outdir2,
-                 cutoff=0.05, # only used for testing.
-				 format='pdf', figsize=(8, 7), top_term=20, no_plot=False, 
-                 verbose=True)
-
-	# to save your figure, make sure that ``ofname`` is not None
-	#barplot(enr_ip.res2d,title='KEGG_2013', ofname='test_GO.pdf')
-
-	### enrichr, Command line
-	#gseapy enrichr -i data/gene_list.txt --ds BP2017 -g GO_Biological_Process_2017 -v -o test_enrichr_BP
-	### GSEA, Command line
-	#gseapy gsea -d data/P53_resampling_data.txt -g KEGG_2016 -c data/P53.cls -o gsea_report -v -t phenotype
-
-	###
-	### other tools for GO:
-	### https://github.com/GuipengLi/SharePathway
-	### https://github.com/jdrudolph/goenrich
-	###
+		### other tools for GO:
+		### https://github.com/GuipengLi/SharePathway
+		### https://github.com/jdrudolph/goenrich
 
 	print("\n### Finished the different expressed analysis")
 	print("\n### Input file: %s" % fi)
 	print("\n### Output txt: %s, %s" % (out_result, out_heatmap_txt))
 	print("\n### Output figure: %s, %s" % (out_volcano, out_heatmap))
-	print("\n### Output dir: %s, %s\n" % (outdir1, outdir2))
+	#print("\n### Output dir: %s, %s\n" % (outdir1, outdir2))
 
 
 if __name__ == '__main__':
@@ -176,9 +182,13 @@ if __name__ == '__main__':
 	parser.add_argument('-wt', required=True, type=str, help='the position of wildtype samples, such as 0:3')
 	parser.add_argument('-ko', required=True, type=str, help='the position of knowkout samples, such as 3:6')
 	parser.add_argument('-p', '--prefix', required=True, type=str, help='the prefix of output')
-	parser.add_argument('-s', '--species', default='Human', choices=['Human', 'Mouse', 'Yeast', 'Fly', 'Fish', 'Worm'], type=str, help="choose enrichr library for GO analysis, default: Human")
+	parser.add_argument('-norm', action='store_true', help='perform the normalization by limma voom')
+	parser.add_argument('-go', action='store_true', help='perform the Gene Ontology analysis')
+
+	parser.add_argument('-s', '--species', default='none', type=str, help="choose enrichr library for GO analysis, such as: Human, Mouse, Yeast, Fly, Fish, Worm")
+	#parser.add_argument('-s', '--species', default='Human', choices=['Human', 'Mouse', 'Yeast', 'Fly', 'Fish', 'Worm'], type=str, help="choose enrichr library for GO analysis, default: Human")
 
 	args = parser.parse_args()
 
-	DE(args.input, args.wt, args.ko, args.prefix, args.species)
+	DE(args.input, args.wt, args.ko, args.prefix, args.norm, args.go, args.species)
 
