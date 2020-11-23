@@ -2,6 +2,9 @@
 
 ***
 #### Dependency 
+Required python version:
++ python >= 3.6
+
 Sevral external software were depended for rapvis:
 
 + trimmomatic 
@@ -12,8 +15,8 @@ Sevral external software were depended for rapvis:
 + STAR
 + bedtools
 
+
 #### Mandatory
-+ python >= 3.6.5
 + pandas >= 1.1.2
 + numpy
 + matplotlib
@@ -25,13 +28,17 @@ Sevral external software were depended for rapvis:
 #### Install
 
 ```
-# clone remote repository
-git clone https://github.com/liuwell/rapvis.git
-# install required python pacakge
-pip install -r requirements.txt
-# add execution path
-echo "path_to_rapvis" >> ~/.bashrc
-source ~/.bashrc
+# Clone remote repository
+$ git clone https://github.com/liuwell/rapvis.git
+
+# Install required python pacakge
+$ cd rapvis
+$ pip install -r requirements.txt
+
+# Add execution path
+# The path of current dir can get by "pwd"
+$ echo "current_dir/rapvis" >> ~/.bashrc
+$ source ~/.bashrc
 ```
 
 #### Usage
