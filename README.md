@@ -9,12 +9,11 @@ Required python version:
 Sevral external software were depended for rapvis:
   
 + trimmomatic
++ STAR
 + hisat2
 + stringtie
 + bwa
 + samtools
-+ STAR
-+ bedtools
   
 ## Mandatory
   
