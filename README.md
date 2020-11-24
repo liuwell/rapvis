@@ -1,7 +1,5 @@
 # rapvis: a tool for RNAseq processing and visualization
 
-***
-
 ## Dependency
 
 Required python version:
@@ -27,9 +25,9 @@ Sevral external software were depended for rapvis:
 + GSEApy
 + rpy2
 
-***
-
 ## Install
+
+### Installing from github
 
 ```bash
 # Clone remote repository
@@ -40,9 +38,16 @@ $ cd rapvis
 $ pip install -r requirements.txt
 
 # Add execution path
-# The path of current dir can get by "pwd"
-$ echo "current_dir/rapvis" >> ~/.bashrc
+# The path of current dir can get by shell command "pwd"
+$ echo "export PATH=$PATH:current_dir/rapvis" >> ~/.bashrc
 $ source ~/.bashrc
+```
+
+```bash{cmd=true}
+# Then you can type -h option to check whether the installation is successful,  
+# If the output as follows, it means your installation is successful
+/home/liuwei/miniconda2/envs/python36/bin/python3 ./rapvis/rapvis_run.py -h
+
 ```
 
 ## Download annotation
@@ -53,17 +58,9 @@ wget www.test.com/index.gz
 
 ## Usage
 
-```bash {cmd=true}
-/home/liuwei/miniconda2/envs/python36/bin/python3 ./rapvis/rapvis_submit.py -h
-```
-
 ### 1. Submit the tasks to cluster
 
-```bash {cmd=true}
-/home/liuwei/miniconda2/envs/python36/bin/python3 ./rapvis/rapvis_run.py -h
-```
-
-```bash{cmd=false}
+```bash
 rapvis_submit.py -i rawdata/ -o processed -s Human -a universal -p 5 -t 2 --minlen 25 --trim5 3 --merge --rRNA
 ```
 
@@ -84,4 +81,3 @@ rapvis_DE.py -i input -p output
 ```bash
 rapvids_corr.py -i input -o output
 ```
-
