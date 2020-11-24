@@ -81,8 +81,8 @@ optional arguments:
 
 You can download genome sequence and annotations GTF file from GENCODE. Strongly recommended for mouse and human (files marked with PRI) : <https://www.gencodegenes.org/>.
 
-Other species can download from ENSEMBL, such as (Human):
-genome sequences: <ftp://ftp.ensembl.org/pub/release-101/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz>
+Other species can download from ENSEMBL, such as (Human): 
+genome sequences: <ftp://ftp.ensembl.org/pub/release-101/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz> 
 GTF file: <ftp://ftp.ensembl.org/pub/release-101/gtf/homo_sapiens/Homo_sapiens.GRCh38.101.gtf.gz>
 
 rapvis support STAR and hisat2 for mapping.
