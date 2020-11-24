@@ -25,7 +25,7 @@ Sevral external software were depended for rapvis:
 + GSEApy
 + rpy2
   
-## Install
+## Installation
   
 ### Installing from github
   
@@ -81,22 +81,22 @@ optional arguments:
 
 You can download genome sequence and annotations GTF file from GENCODE. Strongly recommended for mouse and human (files marked with PRI) : <https://www.gencodegenes.org/>.
 
-Other species can download from ENSEMBL, such as (Human):  
-genome sequences: <ftp://ftp.ensembl.org/pub/release-101/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz>  
-GTF file: <ftp://ftp.ensembl.org/pub/release-101/gtf/homo_sapiens/Homo_sapiens.GRCh38.101.gtf.gz>
+Other species can download from ENSEMBL, such as Zebrafish,  
+genome sequences: <ftp://ftp.ensembl.org/pub/release-101/fasta/danio_rerio/dna/Danio_rerio.GRCz11.dna.primary_assembly.fa.gz>  
+GTF file: <ftp://ftp.ensembl.org/pub/release-101/gtf/danio_rerio/Danio_rerio.GRCz11.101.gtf.gz>
 
-rapvis support STAR and hisat2 for mapping.
+rapvis support **STAR** and **hisat2** for mapping.
 
 ### 1. build STAR index
   
 ```bash
-rapvis_index.py -STAR -genome CRCh38.fa -gtf gencode.V30.gtf
+$ rapvis_index.py -STAR -genome GRCh38.primary_assembly.genome.fa.gz -gtf gencode.v35.primary_assembly.annotation.gtf.gz
 ```
 
 ### 2. build hisat2 index
 
 ```bash
-rapvis_index.py -hisat2 -genome CRCh38.fa -gtf gencode.V30.gtf
+$ rapvis_index.py -hisat2 -genome GRCh38.primary_assembly.genome.fa.gz -gtf gencode.v35.primary_assembly.annotation.gtf.gz
 ```
 
 ## Usage
