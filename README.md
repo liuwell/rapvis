@@ -1,8 +1,6 @@
-#  rapvis: a tool for RNAseq processing and visualization
+# rapvis: a tool for RNAseq processing and visualization
   
-  
-##  Dependency
-  
+## Dependency
   
 Required python version:
   
@@ -18,8 +16,7 @@ Sevral external software were depended for rapvis:
 + STAR
 + bedtools
   
-##  Mandatory
-  
+## Mandatory
   
 + pandas >= 1.1.2
 + numpy
@@ -28,11 +25,9 @@ Sevral external software were depended for rapvis:
 + GSEApy
 + rpy2
   
-##  Install
+## Install
   
-  
-###  Installing from github
-  
+### Installing from github
   
 ```bash
 # Clone remote repository
@@ -48,7 +43,7 @@ $ echo "export PATH=$PATH:current_dir/rapvis" >> ~/.bashrc
 $ source ~/.bashrc
 ```
   
-```bash{code_chunk_offset=0,
+```bash
 # Then you can type -h option to check whether the installation is successful,  
 # If the output as follows, it means your installation is successful
 $ rapvis_run.py -h
@@ -82,40 +77,49 @@ optional arguments:
   -v, --version         show program's version number and exit
 ```
 
-  
-##  Download annotation
-  
+## Build genome index
+
+You can download genome sequence and annotations GTF file from GENCODE. Strongly recommended for mouse and human (files marked with PRI) : https://www.gencodegenes.org/.
+
+Other species can download from ENSEMBL, such as (Human):
+genome sequences: ftp://ftp.ensembl.org/pub/release-101/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz
+GTF file: ftp://ftp.ensembl.org/pub/release-101/gtf/homo_sapiens/Homo_sapiens.GRCh38.101.gtf.gz
+
+rapvis support STAR and hisat2 for mapping.
+
+### 1. build STAR index
   
 ```bash
-wget www.test.com/index.gz
+rapvis_index.py -STAR -genome CRCh38.fa -gtf gencode.V30.gtf
 ```
+
+### 2. build hisat2 index
+
+```bash
+rapvis_index.py -hisat2 -genome CRCh38.fa -gtf gencode.V30.gtf
+```
+
+## Usage
   
-##  Usage
-  
-  
-###  1. Submit the tasks to cluster
-  
+### 1. Submit the tasks to cluster
   
 ```bash
 rapvis_submit.py -i rawdata/ -o processed -s Human -a universal -p 5 -t 2 --minlen 25 --trim5 3 --merge --rRNA
 ```
   
-###  2. Run in local
-  
+### 2. Run in local
   
 ```bash
 rapvis_run.py -i rawdata/ -o processed -s Human -a universal -p 5 -t 2 --minlen 25 --trim5 3 --merge --rRNA
 ```
   
-###  3. Caculated differently expressed genes
-  
+### 3. Caculated differently expressed genes
   
 ```bash
 rapvis_DE.py -i input -p output
 ```
   
-###  4. The Correlation coefficient between samples
-  
+### 4. The Correlation coefficient between samples
   
 ```bash
 rapvids_corr.py -i input -o output
