@@ -23,12 +23,20 @@ Sevral external software were depended for rapvis:
 ***
 #### Install
 
-```
+```bash {cmd=false}
 pip install rapvis
 ```
 
 #### Usage
-```
-rapvis_submit.py -i rawdata/ -o processed -s Human -a universal -p 5 -t 2 --minlen 25 --trim5 3 --merge --rRNA
+```bash {cmd=true}
+/home/liuwei/miniconda2/envs/python36/bin/python3 ./rapvis/rapvis_submit.py -h
 ```
 
+```bash {cmd=true}
+/home/liuwei/miniconda2/envs/python36/bin/python3 ./rapvis/rapvis_run.py -h
+```
+
+
+```bash{cmd=false}
+rapvis_submit.py -i rawdata/ -o processed -s Human -a universal -p 5 -t 2 --minlen 25 --trim5 3 --merge --rRNA
+```
