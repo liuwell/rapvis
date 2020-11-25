@@ -123,4 +123,8 @@ rapvis_DE.py -i input -p output
 ```bash
 rapvids_corr.py -i input -o output
 ```
-  
+
+## Output
+
+A figure for trimmomatic  
+![trim](https://github.com/liuwell/rapvis/blob/master/library/png/merge_qc_raw-1.png)
