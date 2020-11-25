@@ -103,13 +103,13 @@ $ rapvis_build.py -mapper hisat2 -genome GRCh38.primary_assembly.genome.fa.gz -g
 ### 1. Run in local
   
 ```bash
-rapvis_run.py -i tests/data1/ -o TestsResult -p 5 -lib STAR_index -m STAR
+$ rapvis_run.py -i tests/data1/ -o TestsResult -p 5 -lib STAR_index -m STAR
 ```
   
 ### 2. Submit the tasks to cluster
   
 ```bash
-rapvis_submit.py -i tests/data1/ -o TestsResult -lib STAR_index -m STAR -p 5 -t 2
+$ rapvis_submit.py -i tests/data1/ -o TestsResult -lib STAR_index -m STAR -p 5 -t 2
 ```
 
 ### 3. Caculated differently expressed genes
@@ -117,19 +117,19 @@ rapvis_submit.py -i tests/data1/ -o TestsResult -lib STAR_index -m STAR -p 5 -t 
 rapvis can caculated different expressed genes, based on **R limma**:
 
 ```bash
-rapvis_DE.py -i input_TPM.txt -wt 0:3 -ko 3:6 -p output:
+$ rapvis_DE.py -i input_TPM.txt -wt 0:3 -ko 3:6 -p output:
 ```
   
 We can perform gene ontology enrichment analysis by **-go** aption, and the **-s** also needed for determining species:
 
 ```bash
-rapvis_DE.py -i input_TPM.txt -wt 0:3 -ko 3:6 -p output -go -s Human
+$ rapvis_DE.py -i input_TPM.txt -wt 0:3 -ko 3:6 -p output -go -s Human
 ```
 
 If the input gene matrix not be normalized, we can use **-norm** option to normalize, it based on **limma voom**:
 
 ```bash
-rapvis_DE.py -i input_counts.txt -wt 0:3 -ko 3:6 -p output -norm
+$ rapvis_DE.py -i input_counts.txt -wt 0:3 -ko 3:6 -p output -norm
 ```
 
 ### 4. The Correlation coefficient between samples
@@ -137,5 +137,5 @@ rapvis_DE.py -i input_counts.txt -wt 0:3 -ko 3:6 -p output -norm
 We can get the correlation coeffcient heatmap of gene expresstion between samples:
 
 ```bash
-rapvids_corr.py -i input_gene_TPM.txt
+$ rapvids_corr.py -i input_gene_TPM.txt
 ```
