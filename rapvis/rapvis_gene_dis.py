@@ -28,12 +28,18 @@ def gene_dis(fi, output, libpath):
 	data_melt.index = data_melt['gene']
 	
 	### Gene species by gene type
-	index_path = "/home/liuwei/genome/hisat2_index"
 	gene_type = {}
-	with open("%s/gene.type" % libpath) as f:
-		for line in f:
-			line=line.strip().split("\t")
-			gene_type[line[0]] = line[1]
+	with open("%s/gene_type.txt" % libpath) as f:
+		x = str(data_melt.index[0])
+		if x.startswith("ENS"):
+			for line in f:
+				line=line.strip().split("\t")
+				gene_type[line[1]] = line[3]
+		else:
+			for line in f:
+				line=line.strip().split("\t")
+				gene_type[line[2]] = line[3]
+
 
 	gene_type = pd.Series(gene_type, name='gene_type', dtype="string")
 	
