@@ -120,13 +120,13 @@ rapvis can caculated different expressed genes, based on **R limma**:
 rapvis_DE.py -i input_TPM.txt -wt 0:3 -ko 3:6 -p output:
 ```
   
-You can get gene ontology enrichment analysis by **-go** aption, and the **-s** also needed for determining species:
+We can perform gene ontology enrichment analysis by **-go** aption, and the **-s** also needed for determining species:
 
 ```bash
 rapvis_DE.py -i input_TPM.txt -wt 0:3 -ko 3:6 -p output -go -s Human
 ```
 
-If the input gene matrix not be normalized, you can use **-norm** option to normalize, it based on **limma voom**:
+If the input gene matrix not be normalized, we can use **-norm** option to normalize, it based on **limma voom**:
 
 ```bash
 rapvis_DE.py -i input_counts.txt -wt 0:3 -ko 3:6 -p output -norm
@@ -139,8 +139,3 @@ We can get the correlation coeffcient heatmap of gene expresstion between sample
 ```bash
 rapvids_corr.py -i input_gene_TPM.txt
 ```
-
-## Output
-
-A figure for trimmomatic  
-![trim](./library/png/merge_qc_raw-1.png)
