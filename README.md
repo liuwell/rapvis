@@ -145,14 +145,14 @@ $ rapvis_corr.py -i input_gene_TPM.txt
 Several files included in the output directory:
 
 + **merge_gene_TPM.txt**  
-*the gene expression profiles for all* samples, normalized by TPM
-+ **merge_qc_percent.pdf**
+*the gene expression profiles for all samples, normalized by TPM*
++ **merge_qc_percent.pdf**  
 *a quality contrl plot for trimmomatic*
-+ **merge_mapping_percent.pdf**
++ **merge_mapping_percent.pdf**  
 *a barplot of the mapping percent in each sample*
-+ **merge_gene_TPM_species_type.pdf**
++ **merge_gene_TPM_species_type.pdf**  
 *a stat a detected gene species in each sample, group by gene type*
-+ **merge_gene_TPM_species_EI.pdf**
++ **merge_gene_TPM_species_EI.pdf**  
 *a stat a detected gene species in each sample, group by expression interval*
-+ **merge_gene_TPM_density.pdf**
++ **merge_gene_TPM_density.pdf**  
 *a density plot for gene expression distribution*
