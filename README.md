@@ -137,5 +137,12 @@ $ rapvis_DE.py -i input_counts.txt -wt 0:3 -ko 3:6 -p output -norm
 We can get the correlation coeffcient heatmap of gene expresstion between samples:
 
 ```bash
-$ rapvids_corr.py -i input_gene_TPM.txt
+$ rapvis_corr.py -i input_gene_TPM.txt
 ```
+
+## Output
+
+Several files included in the output directory
+
++ merge_gene_TPM.txt # the gene expression profiles for all samples, normalized by TPM
++ merge_qc_percent.pdf # a quality contrl plot for trimmomatic
