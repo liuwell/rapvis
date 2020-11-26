@@ -147,7 +147,7 @@ Several files included in the output directory:
 + **merge_gene_TPM.txt**  
 *the gene expression profiles for all samples, normalized by TPM*
 + **merge_qc_percent.pdf**  
-*a quality contrl plot for trimmomatic*
+*a barplot of quality contrl details by trimmomatic*
 + **merge_mapping_percent.pdf**  
 *a barplot of the mapping details in each sample*
 + **merge_gene_TPM_species_type.pdf**  
