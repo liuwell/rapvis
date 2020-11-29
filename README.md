@@ -89,38 +89,70 @@ rapvis support **STAR** and **hisat2** for mapping.
 ### 1. build STAR index
   
 ```bash
-$ rapvis_index.py -STAR -genome GRCh38.primary_assembly.genome.fa.gz -gtf gencode.v35.primary_assembly.annotation.gtf.gz
+$ rapvis_build.py -mapper STAR -genome GRCh38.primary_assembly.genome.fa.gz -gtf gencode.v35.primary_assembly.annotation.gtf.gz
 ```
 
 ### 2. build hisat2 index
 
 ```bash
-$ rapvis_index.py -hisat2 -genome GRCh38.primary_assembly.genome.fa.gz -gtf gencode.v35.primary_assembly.annotation.gtf.gz
+$ rapvis_build.py -mapper hisat2 -genome GRCh38.primary_assembly.genome.fa.gz -gtf gencode.v35.primary_assembly.annotation.gtf.gz
 ```
 
 ## Usage
   
-### 1. Submit the tasks to cluster
+### 1. Run in local
   
 ```bash
-rapvis_submit.py -i rawdata/ -o processed -s Human -a universal -p 5 -t 2 --minlen 25 --trim5 3 --merge --rRNA
+$ rapvis_run.py -i tests/data1/ -o TestsResult -p 5 -lib STAR_index -m STAR
 ```
   
-### 2. Run in local
+### 2. Submit the tasks to cluster
   
 ```bash
-rapvis_run.py -i rawdata/ -o processed -s Human -a universal -p 5 -t 2 --minlen 25 --trim5 3 --merge --rRNA
+$ rapvis_submit.py -i tests/data1/ -o TestsResult -lib STAR_index -m STAR -p 5 -t 2
 ```
-  
+
 ### 3. Caculated differently expressed genes
-  
+
+rapvis can caculated different expressed genes, based on **R limma**:
+
 ```bash
-rapvis_DE.py -i input -p output
+$ rapvis_DE.py -i input_TPM.txt -wt 0:3 -ko 3:6 -p output:
 ```
   
+We can perform gene ontology enrichment analysis by **-go** aption, and the **-s** also needed for determining species:
+
+```bash
+$ rapvis_DE.py -i input_TPM.txt -wt 0:3 -ko 3:6 -p output -go -s Human
+```
+
+If the input gene matrix not be normalized, we can use **-norm** option to normalize, it based on **limma voom**:
+
+```bash
+$ rapvis_DE.py -i input_counts.txt -wt 0:3 -ko 3:6 -p output -norm
+```
+
 ### 4. The Correlation coefficient between samples
   
+We can get the correlation coeffcient heatmap of gene expresstion between samples:
+
 ```bash
-rapvids_corr.py -i input -o output
+$ rapvis_corr.py -i input_gene_TPM.txt
 ```
-  
+
+## Output
+
+Several files included in the output directory:
+
++ **merge_gene_TPM.txt**  
+*the gene expression profiles for all samples, normalized by TPM*
++ **merge_qc_percent.pdf**  
+*a barplot of quality contrl details by trimmomatic*
++ **merge_mapping_percent.pdf**  
+*a barplot of the mapping details in each sample*
++ **merge_gene_TPM_species_type.pdf**  
+*a stat of detected gene species in each sample, group by gene type*
++ **merge_gene_TPM_species_EI.pdf**  
+*a stat of detected gene species in each sample, group by expression interval*
++ **merge_gene_TPM_density.pdf**  
+*a density plot for gene expression distribution*
