@@ -106,6 +106,8 @@ def rRNAratio(fi):
 		sList.append(s)
 
 	df = DataFrame(sList)
+	df.rename(columns={'*':'others'}, inplace=True)
+	df = df.loc[:,['RNA45S', 'MT-RNR1', 'MT-RNR2', 'others']]
 	prefix = os.path.join(fi, 'merge_rRNA')
 	bplot(df, prefix)
 
