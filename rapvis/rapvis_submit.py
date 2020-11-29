@@ -152,7 +152,7 @@ if __name__ == '__main__':
 	#parser.add_argument('-s', '--species', default='Human', choices=['Human', 'Mouse', 'Rat', 'Rabbit', 'GoldenHamster', 'Zebrafish'], type=str, help='choose reference species for mapping and annotaion (default: Human)')
 	parser.add_argument('-lib', '--libraryPath', type=str, help='set the path of reference species for mapping and annotaion')
 	parser.add_argument('-m', '--mapper', default='hisat2', choices=['hisat2', 'STAR'], type=str, help='choose the mapping program (default: hisat2)')
-	parser.add_argument('-a', '--adapter', default='nextera', choices=['nextera', 'universal'], type=str, help='choose illumina adaptor (default: nextera)')
+	parser.add_argument('-a', '--adapter', default='nextera',  type=str, help='choose illumina adaptor (default: nextera), choices {nextra, unicersal, pAAAAA}')
 	parser.add_argument('-p', '--threads', default=5, type=int, help='number of threads (CPUs) to use (default: 5)')
 	parser.add_argument('-t', '--tasks', default=2, type=int, help='number of submitted tasks (default: 2)')
 	parser.add_argument('-n', '--name', default = 'RNAseq', type=str, help = 'project name (default: RNAseq)')
