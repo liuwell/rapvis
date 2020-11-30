@@ -49,7 +49,7 @@ if len(names_to_install) > 0:
 ### get differently expressed gene by R package 'limma'
 from rpy2 import robjects
 robjects.r('''
-			r_limma <- function(fi, fo, nwt, nko, norm){
+			r_limma <- function(fi, fo, fo2, nwt, nko, norm){
 			
 			library(limma)
 			
@@ -69,6 +69,11 @@ robjects.r('''
 			 
 			DE <- topTable(fit, coef = 2, sort.by = "P", number = Inf)
 			write.table(DE, file = fo, sep="\t", quote=F)
+
+			### output normalized data or log2 transformed data
+			#data <- round(data)
+			#print(data)
+			write.table(data, file = fo2, sep="\t", quote=F)
 	}
 	'''
 )
@@ -84,9 +89,10 @@ def DE(fi, wt, ko, prefix, norm, go, species):
 	ko = int(ko[1]) - int(ko[0])
 	
 	out = prefix + "_DE_all.txt"
-	r_func(fi, out, wt, ko, norm)
+	out2 = prefix + "_norm_all.txt"
+	r_func(fi, out, out2, wt, ko, norm)
 	
-	data = pd.read_table(fi, header=0, index_col=0)
+	data = pd.read_table(out2, header=0, index_col=0)
 	DE = pd.read_table(out, header=0, index_col=0)
 	DE.rename(columns={'P.Value':'Pvalue', 'adj.P.Val':'AdjPval'}, inplace=True)
 
