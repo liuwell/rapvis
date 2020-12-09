@@ -52,9 +52,15 @@ def mapping(fi):
 			f=open(f,'r')
 			lines = f.readlines()
 			x = [x.strip().split(' ')[-2] for x in lines]
-			unmap = int(x[2])
-			uniqmap = int(x[3]) + int(x[5])
-			multimap = int(x[4])
+
+			#if int(x[1]) > int(x[6]:)
+			#unmap = int(x[2])
+			#uniqmap = int(x[3]) + int(x[5])
+			#multimap = int(x[4])
+			#else:
+			unmap = int(x[2]) + int(x[7])
+			uniqmap = int(x[3]) + int(x[5]) + int(x[8])
+			multimap = int(x[4]) + int(x[9])
 			 
 			s = Series([uniqmap, multimap, unmap], index=["UniqueMapped", "MultipleMapped", "UnMapped"], name=name)
 			sList.append(s)
