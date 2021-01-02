@@ -8,6 +8,7 @@ from pandas import Series, DataFrame
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
 import seaborn as sns
+import math
 
 ###############################
 def quality(fi):
@@ -110,12 +111,17 @@ def rRNAratio(fi):
 				d[line[0]] = int(line[1])
 		s = Series(d, name=name)
 		sList.append(s)
-
-	df = DataFrame(sList)
-	df.rename(columns={'*':'others'}, inplace=True)
-	df = df.loc[:,['RNA45S', 'MT-RNR1', 'MT-RNR2', 'others']]
-	prefix = os.path.join(fi, 'merge_rRNA')
-	bplot(df, prefix)
+	
+	try:
+		df = DataFrame(sList)
+		df = df/2
+		df.rename(columns={'*':'others'}, inplace=True)
+		df = df.loc[:,['RNA45S', 'MT-RNR1', 'MT-RNR2', 'others']]
+		prefix = os.path.join(fi, 'merge_rRNA')
+		bplot(df, prefix)
+	except Exception as e:
+		print(e)
+		print("Didn't found any rRNA!!")
 
 ###############################
 def bplot(df, prefix):

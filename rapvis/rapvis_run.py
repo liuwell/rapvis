@@ -8,14 +8,15 @@ import os
 import time
 import sys
 
-from rapvis_merge import merge_profiles
+from rapvis_merge import merge_profiles, merge_gene_counts
 from rapvis_general import current_time
 from rapvis_gene_dis import gene_dis
 from rapvis_quality import *
 import rapvis_rRNA
 
+from rapvis_process import process2
 
-def process(fi, output, adapter, threads, libpath, mapper, minlen, trim5, rRNA):
+def process(fi, output, adapter, threads, libpath, mapper, minlen, trim5, counts, rRNA):
 	
 	'''
 	trim adapter by trimmomatic, mapping to genome by hisat2, transcript asemble by stringtie
@@ -32,13 +33,28 @@ def process(fi, output, adapter, threads, libpath, mapper, minlen, trim5, rRNA):
 
 	# set the path
 	realpath = sys.path[0]
-	#index_path = "/home/liuwei/genome/hisat2_index/"
 	
 	for i in f_index:
 
 		R1 = files[i]
 		R2 = files[i+1]
 
+		process2(R1, R2, output, adapter, threads, libpath, mapper, minlen, trim5, counts, rRNA)
+	else:
+	
+		fi = merge_profiles(output, counts)
+		if counts:
+			merge_gene_counts(output)
+		
+		gene_dis(fi, output, libpath)
+		quality(output)
+		mapping(output)
+		
+		### for rRNA
+		if rRNA:
+			rRNAratio(output)
+
+'''
 		file_name = R1.split("/")[-1].split("_")[0]
 		outdir = os.path.join(output, file_name)
 
@@ -65,42 +81,35 @@ def process(fi, output, adapter, threads, libpath, mapper, minlen, trim5, rRNA):
 		
 		### Mapping by hisat2
 		if mapper == 'hisat2':
-			# hisat2
 			SummaryFile = prefix + "_hisat_summary.txt"
-			HisatOut = prefix + "_hisat_sort.bam"
-			subprocess.call("hisat2 -p %d -x %s/genome_tran -1 %s -2 %s -U %s,%s -t --dta --summary-file %s --new-summary|samtools sort -@ %d -m 10G -o %s" % (threads, libpath, out_R1_p, out_R2_p, out_R1_u, out_R2_u, SummaryFile, threads, HisatOut), shell=True)
-		
-			# Asemble by stringtie
-			stringtieGTF = prefix + '_stringtie.gtf'
-			stringtieGene = prefix + '_gene_abund.tab'
-			subprocess.call("stringtie %s -e -G %s/annotation.gtf -p %d -o %s -A %s" % (HisatOut, libpath, threads, stringtieGTF, stringtieGene), shell=True)
-			
-			### for rRNA
-			if rRNA:
-				rapvis_rRNA.rRNA(R1, R2, output, threads)	
+			MapOut = prefix + "_hisat_sort.bam"
+			subprocess.call("hisat2 -p %d -x %s/genome_tran -1 %s -2 %s -U %s,%s -t --dta --summary-file %s --new-summary|samtools sort -@ %d -m 10G -o %s" % (threads, libpath, out_R1_p, out_R2_p, out_R1_u, out_R2_u, SummaryFile, threads, MapOut), shell=True)
 		
 		### Mapping by STAR
 		elif mapper == 'STAR':
-			# STAR
 			STARprefix = prefix + "_STAR_"
 			subprocess.call("STAR --runThreadN %d --outSAMtype BAM SortedByCoordinate --genomeDir %s --readFilesIn %s %s --readFilesCommand zcat --outFileNamePrefix %s --quantMode GeneCounts --outFilterScoreMinOverLread 0.1 --outFilterMatchNminOverLread 0.1 --outFilterMatchNmin 0  --outFilterMismatchNmax 2" % (threads, libpath, out_R1_p, out_R2_p, STARprefix), shell=True)		
+
+			MapOut = prefix + "_STAR_Aligned.sortedByCoord.out.bam" ## sorted bam file
 			
-			# Asemble by stringtie
-			stringtieGTF = prefix + '_stringtie.gtf'
-			stringtieGene = prefix + '_gene_abund.tab'
-			STARout = prefix + "_STAR_Aligned.sortedByCoord.out.bam" ## sorted bam file
-			subprocess.call("stringtie %s -e -G %s/annotation.gtf -p %d -o %s -A %s" % (STARout, libpath, threads, stringtieGTF, stringtieGene), shell=True)
-	
-	else:
-	
-		fi = merge_profiles(args.output)
-		gene_dis(fi, output, libpath)
-		quality(output)
-		mapping(output)
 		
-		### for rRNA
+		### Asemble by stringtie
+		print("%s Asemble ..." % current_time())
+		stringtieGTF = prefix + '_stringtie.gtf'
+		stringtieGene = prefix + '_gene_abund.tab'
+		subprocess.call("stringtie %s -e -G %s/annotation.gtf -p %d -o %s -A %s" % (MapOut, libpath, threads, stringtieGTF, stringtieGene), shell=True)
+		
+		### Gene counts
+		if counts:
+			countOut = prefix + '_gene_counts.txt'
+			subprocess.call("featureCounts -a %s/annotation.gtf -o %s %s -t exon -g gene_name -T %d -Q 30 -p" % (libpath, countOut, MapOut, threads), shell=True)
+		
+		### rRNA
 		if rRNA:
-			rRNAratio(output)
+			rapvis_rRNA.rRNA(R1, R2, output, threads)	
+'''	
+
+
 
 
 if __name__ == '__main__':
@@ -110,11 +119,12 @@ if __name__ == '__main__':
 	parser.add_argument('-o', '--output', default = 'processed_data', help = 'output directory (default: processed_data)')
 	parser.add_argument('-p', '--threads', default=5, type=int, help='number of threads (CPUs) to use (default: 5)')
 	#parser.add_argument('-s', '--species', default='Human', choices=['Human', 'Mouse', 'Rat', 'Rabbit', 'GoldenHamster', 'Zebrafish'], type=str, help='choose reference species for mapping and annotaion (default: Human)')
-	parser.add_argument('-lib', '--libraryPath', type=str, help='choose reference species for mapping and annotaion')
-	parser.add_argument('-m', '--mapper', default='hisat2', choices=['hisat2', 'STAR'], type=str, help='choose the mapping program (default: hisat2)')
-	parser.add_argument('-a', '--adapter', default='nextera', type=str, help='choose illumina adaptor (default: nextera), choices {nextera, universal, pAAAAA}')
-	parser.add_argument('--minlen', default=35, type=int, help='discard reads shorter than LEN (default: 35)')
-	parser.add_argument('--trim5', default=0, type=int, help='remove bases from the begining of each read (default:0)')
+	parser.add_argument('-lib', '--libraryPath', type=str, metavar='path', help='choose reference species for mapping and annotaion')
+	parser.add_argument('-m', '--mapper', default='STAR', choices=['STAR', 'hisat2'], type=str, help='choose the mapping program (default: STAR)')
+	parser.add_argument('-a', '--adapter', default='universal', type=str, help='choose illumina adaptor (default: universal), choices {universal, nextera, pAAAAA}')
+	parser.add_argument('-minlen', default=35, type=int, metavar='N', help='discard reads shorter than N (default: 35)')
+	parser.add_argument('-trim5', default=0, type=int, metavar='N', help='remove N bases from the begining of each read (default:0)')
+	parser.add_argument('--counts', action='store_true', help='Get gene counts')
 	parser.add_argument('--rRNA', action='store_true', help='whether mapping to rRNA(Human)')
 	parser.add_argument('-v', '--version', action='version', version='%(prog)s 0.0.2')
 
@@ -123,7 +133,7 @@ if __name__ == '__main__':
 	print("\n%s ..... Start RNAseq processing" % (current_time()))
 	start_time = time.time()
 
-	process(args.input, args.output, args.adapter, args.threads, args.libraryPath, args.mapper, args.minlen, args.trim5, args.rRNA)
+	process(args.input, args.output, args.adapter, args.threads, args.libraryPath, args.mapper, args.minlen, args.trim5, args.counts, args.rRNA)
 
 	###
 	end_time = time.time()

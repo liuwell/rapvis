@@ -14,6 +14,7 @@ Sevral external software were depended for rapvis:
 + stringtie
 + bwa
 + samtools
++ featureCounts
   
 ## Mandatory
   

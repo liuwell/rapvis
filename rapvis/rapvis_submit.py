@@ -13,7 +13,7 @@ import numpy as np
 from rapvis_quality import *
 from rapvis_gene_dis import gene_dis
 from rapvis_general import current_time
-
+from rapvis_merge import merge_gene_counts
 
 ###
 def GetRunningTasks(name):
@@ -32,7 +32,7 @@ def GetRunningTasks(name):
 	return n	
 
 
-def SubmitTask(fi, output, adapter, threads, libpath, mapper, tasks, name, minlen, trim5, queue, rRNA):
+def SubmitTask(fi, output, adapter, threads, libpath, mapper, tasks, name, minlen, trim5, queue, counts, rRNA):
 	'''
 	submit tasks to the server
 	'''
@@ -75,11 +75,17 @@ def SubmitTask(fi, output, adapter, threads, libpath, mapper, tasks, name, minle
 				f.write("source ~/.bash_profile\n")
 
 				realpath = sys.path[0]
+				'''
 				f.write("python %s/rapvis_process.py -f1 %s -f2 %s -o %s -a %s -p %d -lib %s -m %s --minlen %d --trim5 %d\n" %(realpath, R1, R2, output, adapter, threads, libpath, mapper, minlen, trim5))
 				
 				if rRNA:
 					f.write("python %s/rapvis_rRNA.py -f1 %s -f2 %s -o %s -p %d\n" % (realpath, R1, R2, output, threads))
+				'''
 				
+				rRNA = '--rRNA' if rRNA else ''
+				counts = '--counts' if counts else ''
+
+				f.write("python %s/rapvis_process.py -R1 %s -R2 %s -o %s -a %s -p %d -lib %s -m %s --minlen %d --trim5 %d %s %s\n" %(realpath, R1, R2, output, adapter, threads, libpath, mapper, minlen, trim5, counts, rRNA))
 				f.close()
 			
 				subprocess.call("qsub -cwd -q %s %s" % (queue, tmp), shell=True)
@@ -150,15 +156,16 @@ if __name__ == '__main__':
 	parser.add_argument('-i', '--input', required=True, help='the input data')
 	parser.add_argument('-o', '--output', default = 'processed_data', help = 'output directory (default: processed_data)')
 	#parser.add_argument('-s', '--species', default='Human', choices=['Human', 'Mouse', 'Rat', 'Rabbit', 'GoldenHamster', 'Zebrafish'], type=str, help='choose reference species for mapping and annotaion (default: Human)')
-	parser.add_argument('-lib', '--libraryPath', type=str, help='set the path of reference species for mapping and annotaion')
-	parser.add_argument('-m', '--mapper', default='hisat2', choices=['hisat2', 'STAR'], type=str, help='choose the mapping program (default: hisat2)')
-	parser.add_argument('-a', '--adapter', default='nextera',  type=str, help='choose illumina adaptor (default: nextera), choices {nextra, unicersal, pAAAAA}')
+	parser.add_argument('-lib', '--libraryPath', type=str, metavar='path', help='set the path of reference species for mapping and annotaion')
+	parser.add_argument('-m', '--mapper', default='STAR', choices=['STAR', 'hisat2'], type=str, help='choose the mapping program (default: STAR)')
+	parser.add_argument('-a', '--adapter', default='universal',  type=str, help='choose illumina adaptor (default: universal), choices {universal, nextera, pAAAAA}')
 	parser.add_argument('-p', '--threads', default=5, type=int, help='number of threads (CPUs) to use (default: 5)')
 	parser.add_argument('-t', '--tasks', default=2, type=int, help='number of submitted tasks (default: 2)')
 	parser.add_argument('-n', '--name', default = 'RNAseq', type=str, help = 'project name (default: RNAseq)')
-	parser.add_argument('--minlen', default=35, type=int, help='discard reads shorter than minlen (default: 35)')
-	parser.add_argument('--trim5', default=0, type=int, help='remove bases from the begining of each read (default:0)')
+	parser.add_argument('-minlen', default=35, type=int, metavar='N', help='discard reads shorter than N (default: 35)')
+	parser.add_argument('-trim5', default=0, type=int, metavar='N', help='remove N bases from the begining of each read (default:0)')
 	#parser.add_argument('--merge', action='store_true', help='merge gene expression profiles and plot distribution pattern')
+	parser.add_argument('--counts', action='store_true', help='Get gene counts')
 	parser.add_argument('--rRNA', action='store_true', help='whether mapping to rRNA(Human)')
 	parser.add_argument('-q', default='b1.q', choices=['b1.q', 'g1.q'], type=str, help='bind job to queue (default: b1.q)')
 	parser.add_argument('-v', '--version', action='version', version='%(prog)s 0.0.2')
@@ -169,10 +176,13 @@ if __name__ == '__main__':
 	print("\n%s ..... Start RNAseq processing" % (current_time()))
 	start_time = time.time()
 
-	SubmitTask(args.input, args.output, args.adapter, args.threads, args.libraryPath, args.mapper, args.tasks, args.name, args.minlen, args.trim5, args.q, args.rRNA)
+	SubmitTask(args.input, args.output, args.adapter, args.threads, args.libraryPath, args.mapper, args.tasks, args.name, args.minlen, args.trim5, args.q, args.counts, args.rRNA)
 	
 	#if args.merge:
 	fi = merge_profiles(args.name, args.output)
+	if args.counts:
+		merge_gene_counts(args.output)
+
 	gene_dis(fi, args.output, args.libraryPath)
 		
 	quality(args.output)

@@ -88,6 +88,7 @@ def gene_dis(fi, output, libpath):
 	plt.savefig(out_box, bbox_inches='tight')
 	plt.close()
 	
+	'''
 	### Gene species
 	sns.displot(data_melt, x="sample", shrink=.8, height=height, aspect=aspect)
 	plt.xticks(rotation=90)
@@ -97,6 +98,7 @@ def gene_dis(fi, output, libpath):
 	out_box = prefix + "_species.pdf"
 	plt.savefig(out_box, bbox_inches='tight')
 	plt.close()
+	'''
 
 	### Gene species by expression interval
 	values = pd.cut(data_melt['value'], [0, 1, 5, 10, 50, 100, 1000, 1000000], labels=['0~1', '1~5', '5~10', '10~50', '50~100', '100~1000', '>1000'])
