@@ -50,9 +50,9 @@ $ rapvis_run.py -h
 ```
 
 ```
-usage: rapvis_run.py [-h] -i INPUT [-o OUTPUT] [-p THREADS] [-lib LIBRARYPATH]
-                     [-m {hisat2,STAR}] [-a {nextera,universal}]
-                     [--minlen MINLEN] [--trim5 TRIM5] [--rRNA] [-v]
+usage: rapvis_run.py [-h] -i INPUT [-o OUTPUT] [-p THREADS] [-lib path]
+                     [-m {STAR,hisat2}] [-a ADAPTER] [-minlen N] [-trim5 N]
+                     [--counts] [--rRNA] [-v]
 
 A tool for RNAseq processing and visualization
 
@@ -64,17 +64,20 @@ optional arguments:
                         output directory (default: processed_data)
   -p THREADS, --threads THREADS
                         number of threads (CPUs) to use (default: 5)
-  -lib LIBRARYPATH, --libraryPath LIBRARYPATH
+  -lib path, --libraryPath path
                         choose reference species for mapping and annotaion
-  -m {hisat2,STAR}, --mapper {hisat2,STAR}
-                        choose the mapping program (default: hisat2)
-  -a {nextera,universal}, --adapter {nextera,universal}
-                        choose illumina adaptor (default: nextera)
-  --minlen MINLEN       discard reads shorter than LEN (default: 35)
-  --trim5 TRIM5         remove bases from the begining of each read
+  -m {STAR,hisat2}, --mapper {STAR,hisat2}
+                        choose the mapping program (default: STAR)
+  -a ADAPTER, --adapter ADAPTER
+                        choose illumina adaptor (default: universal), choices
+                        {universal, nextera, pAAAAA}
+  -minlen N             discard reads shorter than N (default: 35)
+  -trim5 N              remove N bases from the begining of each read
                         (default:0)
+  --counts              Get gene counts
   --rRNA                whether mapping to rRNA(Human)
   -v, --version         show program's version number and exit
+
 ```
 
 ## Build genome index
